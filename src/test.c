@@ -6,7 +6,7 @@
 /*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/04 16:03:25 by sparth           ###   ########.fr       */
+/*   Updated: 2024/04/15 19:54:44 by sparth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 
 void	test_parse_tree(t_node *node)
 {
+	if (node == NULL)
+	{
+		printf("end of parse_tree reched\n");
+		return ;
+	}
 	if (node->node_type == PIPE)
 	{
 		printf("hello from PIPE node\n");
@@ -110,36 +115,68 @@ int	main(int argc, char **argv, char **env)
 	test_parse_tree(data->parse_tree);
 }
 */
+
+
+void    sig_action(int sig)
+{
+    (void)sig;
+    write(1, "\n", 1);
+    rl_replace_line("", 1);
+    rl_on_new_line();
+    rl_redisplay();
+        return ;
+}
+
+
 int	main(int argc, char **argv, char **env)
 {
 	t_data	*data;
-	// t_token	*tmp;
 	char	*input;
+	// t_token	*tmp;
 
 	data = init_data(argc, argv, env);
 	create_env_list(data);
-	// test_env_list(data);
+	
 
 	while (1)
 	{
-		input = readline("Minishell $> ");
-		// check for open quotes -> if open quotes abort
+		rl_catch_signals = 0;
+        signal(SIGQUIT, SIG_IGN);
+        signal(SIGINT, sig_action);
+		input = readline("\x1b[32mMinishell $> \x1b[0m");
+		if (!input)
+		{
+			free_everything(data);
+			printf("exit\n");
+			return (0);
+		}
+		signal(SIGINT, SIG_IGN);
 		add_history(input);
-		// data = init_data(argc, argv, env);
 		lexer(input, data);
-
-		// tmp = data->token_list;
-		// while (tmp != NULL)
-		// {
-			// printf("type: %u\ntoken_str: %s\n", tmp->token_type, tmp->token_str);
-		// 	tmp = tmp->next;
-		// }
+		free(input);
+		if (syntax_check(data) == 1)
+		{
+			free_token_list(data->token_list);
+			data->token_list = NULL;
+			continue ;
+		}
 		expander(data);
 		data->parse_tree = parse_pipe(data->token_list);
 		data->token_list = NULL;
-		test_parse_tree(data->parse_tree);
-		// printf("check\n");
-		pre_exec(data->parse_tree);
+		// test_parse_tree(data->parse_tree);
+		data->last_exit_code = pre_exec(data->parse_tree, data);
+		free_parse_tree(data->parse_tree);
+		data->parse_tree = NULL;
 	}
 	return (0);
 }
+/*
+To do:
+- exit codes does no work anymore(value in data struct does not get changed)
+- free memory, when command fails (unset PATH->ls)
+- check eval sheet for edge cases
+- clean history
+- check for memory leaks
+- Norminette
+...
+*/

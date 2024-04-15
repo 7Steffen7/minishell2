@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 13:33:18 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/26 14:31:03 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/14 14:22:20 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,7 @@ t_node	*init_node(type node_type)
 	node = malloc(sizeof(t_node));
 	if (node == NULL)
 		return (NULL);
-	if (node_type == PIPE)
-		node->node_type = PIPE;
-	else if (node_type == REDIR)
-		node->node_type = REDIR;
-	else if (node_type == EXEC)
-		node->node_type = EXEC;	
+	node->node_type = node_type;
 	node->command = NULL;
 	node->infile = NULL;
 	node->outfile = NULL;
@@ -48,6 +43,6 @@ t_data	*init_data(int argc, char **argv, char **env)
 	data->token_list = NULL;
 	data->parse_tree = NULL;
 	data->env_list = NULL;
-	// data->nb_tokens = 0;
+	data->last_exit_code = 0;
 	return (data);
 }

@@ -3,32 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:22:25 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/04 14:49:37 by sparth           ###   ########.fr       */
+/*   Updated: 2024/04/14 14:21:00 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void	update_token_list(t_token **token_list, t_token *redir_token)
+void	update_token_list(t_token **token_list)
 {
 	t_token	*tmp;
 	t_token	*tmp2;
 
-	redir_token = NULL;
+	tmp = *token_list;
 	if ((*token_list)->token_type == REDIR)
 	{
-		tmp = *token_list;
 		*token_list = (*token_list)->next->next;
-		(*token_list)->previous = NULL;
+		if (*token_list != NULL)
+			(*token_list)->previous = NULL;
 		free_token(tmp->next);
 		free_token(tmp);
 	}
 	else
 	{
-		tmp = *token_list;
 		while (tmp->next->token_type != REDIR)
 			tmp = tmp->next;
 		tmp2 = tmp;
@@ -44,7 +43,7 @@ void	update_token_list(t_token **token_list, t_token *redir_token)
 void	config_redir_node(t_token *redir_token, t_node *redir_node)
 {
 	char	*token_str;
-	
+
 	token_str = redir_token->token_str;
 	if (ft_strcmp(token_str, "<") == 0)
 	{
