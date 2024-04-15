@@ -6,7 +6,7 @@
 /*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/15 19:54:44 by sparth           ###   ########.fr       */
+/*   Updated: 2024/04/16 00:20:10 by sparth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,17 +117,6 @@ int	main(int argc, char **argv, char **env)
 */
 
 
-void    sig_action(int sig)
-{
-    (void)sig;
-    write(1, "\n", 1);
-    rl_replace_line("", 1);
-    rl_on_new_line();
-    rl_redisplay();
-        return ;
-}
-
-
 int	main(int argc, char **argv, char **env)
 {
 	t_data	*data;
@@ -140,9 +129,7 @@ int	main(int argc, char **argv, char **env)
 
 	while (1)
 	{
-		rl_catch_signals = 0;
-        signal(SIGQUIT, SIG_IGN);
-        signal(SIGINT, sig_action);
+		pre_rl_signals();
 		input = readline("\x1b[32mMinishell $> \x1b[0m");
 		if (!input)
 		{
@@ -172,7 +159,7 @@ int	main(int argc, char **argv, char **env)
 }
 /*
 To do:
-- exit codes does no work anymore(value in data struct does not get changed)
+- exit codes does no work anymore(value in data struct does not get changed) -- check your facts bro
 - free memory, when command fails (unset PATH->ls)
 - check eval sheet for edge cases
 - clean history

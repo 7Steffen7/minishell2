@@ -6,7 +6,7 @@
 /*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/15 14:33:37 by sparth           ###   ########.fr       */
+/*   Updated: 2024/04/16 01:03:51 by sparth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,46 @@ int		ft_isspace(char c);
 //exec.c
 int		pre_exec(t_node *node, t_data *data);
 void	exec(t_node *node, t_data *data);
-void	set_quote_flags(char *str, int *s_quote_open, int *d_quote_open);
+void	set_quote_flags(char *str, int *s_quote_open, int *d_quote_open); //check if still there
+void	string_cut(char *s, int flag);
+
+//exec_path.c
+void	*free_null(char *del);
+void	path_clean(t_path_prep check, int status);
+t_path_prep	init_struct(void);
+char	*cmd_cut(char *cmd);
+char	*path_check2(char *cmd, t_path_prep check);
+char	*path_check(char *cmd, char *path);
+
+//exec_redir.c
+void	input_redirect(t_node *node, t_data *data);
+void	heredoc(t_node *node, t_data *data);
+void	output_redirect(t_node *node, t_data *data);
+void	output_redirect_append(t_node *node, t_data *data);
+
+//signals.c
+void	sig_action(int sig);
+void	pre_rl_signals(void);
+void	sig_child_int(int sig);
+void	sig_child_quit(int sig);
+
+//exec_env_buildins.c
+void	env(t_data *data);
+int		look_4_unset(t_node *node, t_data *data);
+bool	export_check(char *arg);
+int		look_4_export(t_node *node, t_data *data);
+
+//exec_print_buildins.c
+bool	check_n_option(char *option, char *echo_check);
+void	echo(t_node *node, t_data *data);
+void	pwd(t_data *data);
+
+//exec_cd_buildin.c
+void	change_pwds(t_data *data, bool flag);
+void	prep_dir_change(t_data *data, int flag, char *path);
+bool	switch_between_dir(t_data *data);
+int		path_change(char *cmd, t_data *data);
+int		look_4_cd(t_node *node, t_data *data);
 
 
 #endif
